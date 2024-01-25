@@ -62,9 +62,9 @@ temphighs <- weather %>%
   mutate(temp_labels = paste("Record\nHigh: ",High))
 
 ggplot(weather) +
-    geom_linerange(aes(ymin=RecordLow,ymax=RecordHigh,x=date), color = "#ECEBE3",linewidth=1.5) +
-    geom_linerange(aes(ymin=NormalLow,ymax=NormalHigh,x=date), color = "#C8B8BA",linewidth=1.5) +
-    geom_linerange(aes(ymin=Low,ymax=High,x=date), color = "#A90248",linewidth=1.5) +
+    geom_linerange(aes(ymin=RecordLow,ymax=RecordHigh,x=date), color = "#ECEBE3",linewidth=2) +
+    geom_linerange(aes(ymin=NormalLow,ymax=NormalHigh,x=date), color = "#C8B8BA",linewidth=2) +
+    geom_linerange(aes(ymin=Low,ymax=High,x=date), color = "#A90248",linewidth=2) +
     geom_vline(data=startmonth, aes(xintercept=date),linetype="dotted",alpha=0.2,linewidth=0.33)+
     geom_text(data = temphighs, aes(x=date,y=High+6,label=temp_labels),position = position_dodge2(padding = 0,preserve = "single",width = 15))+
     geom_point(data = temphighs, aes(x=date,y=High+1),shape=25,fill="black")+
@@ -74,11 +74,35 @@ ggplot(weather) +
     scale_y_continuous(limits = c(-20,120))+
     theme_classic()+
     labs(x="",y="",title="Temperature")+
-    theme(axis.text = element_text(hjust=-2))
+    theme(axis.text = element_text(hjust=-2),
+          axis.line.x = element_blank(),
+          axis.ticks.x = element_blank())
 ```
 
-```{r}
+```{r, fig.width=18,fig.height=4}
+record_p <- weather %>% 
+  filter(RecordP==TRUE)
 
+month_ends <- weather %>% 
+  group_by(Month) %>% 
+  top_n(1,Day)
+
+weather %>% 
+  ggplot()+
+  geom_area(aes(x=date,y=CulmPrec),fill="#ebeae2")+
+  geom_line(aes(x=date,y=CulmPrec,group=Month),color="#32a3d8")+
+  geom_vline(data=startmonth, aes(xintercept=date),alpha=0.3,linewidth=0.33)+
+  geom_point(data = record_p, aes(x=date,y=CulmPrec+0.07),shape=25,fill="black")+
+  geom_text(data = month_ends, aes(x=date,y=CulmPrec+0.2,label=CulmPrec))+
+  labs(x="",y="",title="Precipitation")+
+  scale_x_date(breaks = "1 month",
+                 date_labels = "%b",
+                 expand = c(0,0))+
+  scale_y_continuous(breaks=c(4,8))+
+  theme_classic()+
+  theme(axis.line.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 ```
 
 

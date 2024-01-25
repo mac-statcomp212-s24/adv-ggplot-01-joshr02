@@ -53,24 +53,33 @@ weather <- read_csv("https://lmyint.github.io/212_spring_2024/data/sfo_weather.c
 
 # Visualization
 
-```{r}
+```{r, fig.width=18,fig.height=10}
 startmonth <- weather %>% 
   filter(Day==1,dateInYear!=1)
 
+temphighs <- weather %>% 
+  filter(High>=RecordHigh) %>% 
+  mutate(temp_labels = paste("Record\nHigh: ",High))
+
 ggplot(weather) +
-    geom_linerange(aes(ymin=RecordLow,ymax=RecordHigh,x=date), color = "#ECEBE3",linewidth=0.67) +
-    geom_linerange(aes(ymin=NormalLow,ymax=NormalHigh,x=date), color = "#C8B8BA",linewidth=0.67) +
-    geom_linerange(aes(ymin=Low,ymax=High,x=date), color = "#A90248",linewidth=0.67) +
+    geom_linerange(aes(ymin=RecordLow,ymax=RecordHigh,x=date), color = "#ECEBE3",linewidth=1.5) +
+    geom_linerange(aes(ymin=NormalLow,ymax=NormalHigh,x=date), color = "#C8B8BA",linewidth=1.5) +
+    geom_linerange(aes(ymin=Low,ymax=High,x=date), color = "#A90248",linewidth=1.5) +
     geom_vline(data=startmonth, aes(xintercept=date),linetype="dotted",alpha=0.2,linewidth=0.33)+
+    geom_text(data = temphighs, aes(x=date,y=High+6,label=temp_labels),position = position_dodge2(padding = 0,preserve = "single",width = 15))+
+    geom_point(data = temphighs, aes(x=date,y=High+1),shape=25,fill="black")+
     scale_x_date(breaks = "1 month",
                  date_labels = "%b",
                  expand = c(0,0))+
     scale_y_continuous(limits = c(-20,120))+
     theme_classic()+
-    labs(x="")+
-    theme(axis.text = element_text(hjust=-0.9))
+    labs(x="",y="",title="Temperature")+
+    theme(axis.text = element_text(hjust=-2))
 ```
 
+```{r}
+
+```
 
 
 
